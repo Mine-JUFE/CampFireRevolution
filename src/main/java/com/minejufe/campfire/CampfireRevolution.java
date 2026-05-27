@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 
 import com.minejufe.campfire.item.ModItems;
 import com.minejufe.campfire.item.ModCreativeTabs;
+import com.minejufe.campfire.block.ModBlockEntities;
+import com.minejufe.campfire.block.ModBlocks;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -70,10 +72,12 @@ public class CampfireRevolution {
     // is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and
     // pass them in automatically.
+
     public CampfireRevolution(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
