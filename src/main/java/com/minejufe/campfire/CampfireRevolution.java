@@ -6,6 +6,7 @@ import com.minejufe.campfire.item.ModItems;
 import com.minejufe.campfire.item.ModCreativeTabs;
 import com.minejufe.campfire.block.ModBlockEntities;
 import com.minejufe.campfire.block.ModBlocks;
+import com.minejufe.campfire.client.ClientModEvents;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,6 +28,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -80,7 +82,10 @@ public class CampfireRevolution {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
-
+        // 挂载渲染注册事件
+        if (FMLEnvironment.getDist().isClient()) {
+            modEventBus.addListener(ClientModEvents::registerBER);
+        }
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class
         // (CampfireRevolution) to respond directly to events.
