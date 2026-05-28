@@ -1,5 +1,6 @@
 package com.minejufe.campfire.client;
 
+import java.util.List;
 import java.util.function.Function;
 
 import org.jspecify.annotations.Nullable;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -27,12 +29,12 @@ public class CampfireRenderer<T extends BlockEntity>
         implements BlockEntityRenderer<T, CampfireRenderer.CampfireRenderState> {
 
     public static class CampfireRenderState extends BlockEntityRenderState {
-        public final ItemStackRenderState[] items = new ItemStackRenderState[5];
+        public final ItemStackRenderState[] items = new ItemStackRenderState[8];
 
         public int packedLight;
 
         public CampfireRenderState() {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 8; i++) {
                 items[i] = new ItemStackRenderState();
             }
         }
@@ -56,6 +58,8 @@ public class CampfireRenderer<T extends BlockEntity>
     public void extractRenderState(T blockEntity, CampfireRenderState state, float partialTicks,
             Vec3 cameraPosition, @Nullable CrumblingOverlay breakProgress) {
 
+        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+
         if (blockEntity.getLevel() != null) {
             int blockLight = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, blockEntity.getBlockPos().above());
             int skyLight = blockEntity.getLevel().getBrightness(LightLayer.SKY, blockEntity.getBlockPos().above());
@@ -67,8 +71,18 @@ public class CampfireRenderer<T extends BlockEntity>
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.getAmountAsInt(i) > 0) {
                 ItemStack stack = inventory.getResource(i).toStack();
-                this.itemModelResolver.updateForNonLiving(state.items[i], stack,
-                        ItemDisplayContext.FIXED, null);
+
+                // 使用营火的坐标和物品槽位生成一个固定的随机种子,用于物品模型的随机变化
+                int seed = (int) blockEntity.getBlockPos().asLong() + i;
+
+                this.itemModelResolver.updateForTopItem(
+                        state.items[i],
+                        stack,
+                        ItemDisplayContext.FIXED,
+                        blockEntity.getLevel(),
+                        null,
+                        seed);
+
             } else {
                 state.items[i].clear();
             }
@@ -85,11 +99,11 @@ public class CampfireRenderer<T extends BlockEntity>
 
             poseStack.pushPose();
 
-            poseStack.translate(0.5, 0.4, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(i * 90));
-            poseStack.translate(0.2, 0, 0);
-            poseStack.mulPose(Axis.XP.rotationDegrees(90));
-            poseStack.scale(0.4f, 0.4f, 0.4f);
+            poseStack.translate(0.5F, 0.44921875F, 0.5F);
+            poseStack.mulPose(Axis.YP.rotationDegrees(i * 45.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            poseStack.translate(-0.3125F, -0.3125F, 0.0F);
+            poseStack.scale(0.375F, 0.375F, 0.375F);
 
             state.items[i].submit(poseStack, submitNodeCollector, state.packedLight, OverlayTexture.NO_OVERLAY, 0);
 

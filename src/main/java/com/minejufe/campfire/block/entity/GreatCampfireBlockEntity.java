@@ -1,12 +1,23 @@
 package com.minejufe.campfire.block.entity;
 
+import javax.annotation.Nullable;
+
 import com.minejufe.campfire.block.ModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,10 +27,10 @@ import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
 public class GreatCampfireBlockEntity extends BlockEntity {
     // 定义容量大小
-    public final ItemStacksResourceHandler inventory = new ItemStacksResourceHandler(5);
+    public final ItemStacksResourceHandler inventory = new ItemStacksResourceHandler(8);
     // 记录每个格子的加工进度和需要的总时间
-    public final int[] cookingProgress = new int[inventory.size()];
-    public final int[] cookingTime = new int[inventory.size()];
+    public final int[] cookingProgress = new int[8];
+    public final int[] cookingTime = new int[8];
 
     public GreatCampfireBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.GREAT_CAMPFIRE_BE.get(), pos, state);
@@ -57,14 +68,86 @@ public class GreatCampfireBlockEntity extends BlockEntity {
                         Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), result);
                         // 清空这个位置的物品
                         blockEntity.inventory.set(i, ItemResource.EMPTY, 0);
+
+                        serverLevel.sendBlockUpdated(pos, state, state, 3);
                     }
                 }
             }
         }
 
-        // 如果发生了状态改变，通知区块保存数据
+        // 如果发生了状态改变，保存数据
         if (didCook) {
             blockEntity.setChanged();
         }
     }
+
+    // 存放在营火中的物品数据
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+
+        // 转换成itemstack以备调用
+        NonNullList<ItemStack> list = NonNullList
+                .withSize(this.inventory.size(), ItemStack.EMPTY);
+        for (int i = 0; i < this.inventory.size(); i++) {
+            if (this.inventory.getAmountAsInt(i) > 0) {
+                list.set(i, this.inventory.getResource(i).toStack());
+            }
+        }
+        // 序列化营火中的物品
+        ContainerHelper.saveAllItems(output.child("Items"), list, true);
+        // 现在看不见肉，临时加一下
+        System.out.println("[client Save] item in inventory0: " + this.inventory.getResource(0));
+
+        // 保存加工进度
+        for (int i = 0; i < this.cookingProgress.length; i++) {
+            output.putInt("CookingProgress_" + i, this.cookingProgress[i]);
+            output.putInt("CookingTime_" + i, this.cookingTime[i]);
+        }
+    }
+
+    // 读取在营火里的物品数据
+    @Override
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+
+        NonNullList<ItemStack> list = NonNullList
+                .withSize(this.inventory.size(), ItemStack.EMPTY);
+
+        input.child("Items").ifPresent(it -> ContainerHelper.loadAllItems(it, list));
+
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).isEmpty()) {
+                this.inventory.set(i, ItemResource.of(list.get(i)),
+                        list.get(i).getCount());
+            } else {
+                this.inventory.set(i, ItemResource.EMPTY, 0);
+            }
+        }
+
+        System.out.println("[client Load]item of inventory0: " + this.inventory.getResource(0));
+
+        for (int i = 0; i < this.cookingProgress.length; i++) {
+            this.cookingProgress[i] = input.getIntOr("CookingProgress_" + i, 0);
+            this.cookingTime[i] = input.getIntOr("CookingTime_" + i, 0);
+        }
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        var output = net.minecraft.world.level.storage.TagValueOutput
+                .createWithContext(net.minecraft.util.ProblemReporter.DISCARDING, registries);
+        this.saveAdditional(output);
+
+        net.minecraft.nbt.CompoundTag tag = output.buildResult();
+
+        return tag;
+    }
+
+    @Override
+    @Nullable
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
 }

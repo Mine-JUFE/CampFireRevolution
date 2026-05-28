@@ -3,7 +3,6 @@ package com.minejufe.campfire.block;
 import com.minejufe.campfire.block.entity.GreatCampfireBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -76,10 +75,13 @@ public class GreatCampfireBlock extends CampfireBlock {
                             blockEntity.cookingTime[i] = recipe.get().value().cookingTime();
                             blockEntity.cookingProgress[i] = 0;
 
-                            // 扣除非创造玩家手里的 1 个物品
+                            // 扣除玩家手里的 1 个物品
                             if (!pPlayer.gameMode().isCreative()) {
                                 pStack.shrink(1);
                             }
+
+                            blockEntity.setChanged();
+                            serverLevel.sendBlockUpdated(pPos, pState, pState, 3);
 
                             return InteractionResult.SUCCESS;
                         }
