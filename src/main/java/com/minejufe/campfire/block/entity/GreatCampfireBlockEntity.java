@@ -101,10 +101,9 @@ public class GreatCampfireBlockEntity extends SyncedBlockEntity {
         for (int i = 0; i < this.cookingProgress.length; i++) {
             output.putInt("CookingProgress_" + i, this.cookingProgress[i]);
             output.putInt("CookingTime_" + i, this.cookingTime[i]);
-
-            // 序列化营火中的物品
-            ContainerHelper.saveAllItems(output.child("Items"), list, true);
         }
+        // 序列化营火中的物品
+        ContainerHelper.saveAllItems(output.child("Items"), list, true);
     }
 
     // 读取在营火里的物品数据
@@ -129,6 +128,25 @@ public class GreatCampfireBlockEntity extends SyncedBlockEntity {
         for (int i = 0; i < this.cookingProgress.length; i++) {
             this.cookingProgress[i] = input.getIntOr("CookingProgress_" + i, 0);
             this.cookingTime[i] = input.getIntOr("CookingTime_" + i, 0);
+        }
+    }
+
+    // 破坏后掉落物品
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+
+        super.preRemoveSideEffects(pos, state);
+        if (this.level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+
+            for (int i = 0; i < this.inventory.size(); i++) {
+                if (this.inventory.getAmountAsInt(i) > 0) {
+
+                    ItemStack stack = this.inventory.getResource(i).toStack();
+                    Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), stack);
+                    // 清空物品栏
+                    this.inventory.set(i, net.neoforged.neoforge.transfer.item.ItemResource.EMPTY, 0);
+                }
+            }
         }
     }
 }
