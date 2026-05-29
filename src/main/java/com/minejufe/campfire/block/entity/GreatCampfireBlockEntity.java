@@ -3,6 +3,7 @@ package com.minejufe.campfire.block.entity;
 import javax.annotation.Nullable;
 
 import com.minejufe.campfire.block.ModBlockEntities;
+import com.minejufe.campfire.block.entity.SyncedBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -16,16 +17,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
-public class GreatCampfireBlockEntity extends BlockEntity {
+public class GreatCampfireBlockEntity extends SyncedBlockEntity {
     // 定义容量大小
     public final ItemStacksResourceHandler inventory = new ItemStacksResourceHandler(8);
     // 记录每个格子的加工进度和需要的总时间
@@ -48,7 +50,7 @@ public class GreatCampfireBlockEntity extends BlockEntity {
 
         boolean didCook = false;
 
-        // 遍历 4 个格子
+        // 遍历每个栏位
         for (int i = 0; i < blockEntity.inventory.size(); i++) {
             ItemStack stack = blockEntity.inventory.getResource(i).toStack();
             if (!stack.isEmpty()) {
@@ -94,15 +96,14 @@ public class GreatCampfireBlockEntity extends BlockEntity {
                 list.set(i, this.inventory.getResource(i).toStack());
             }
         }
-        // 序列化营火中的物品
-        ContainerHelper.saveAllItems(output.child("Items"), list, true);
-        // 现在看不见肉，临时加一下
-        System.out.println("[client Save] item in inventory0: " + this.inventory.getResource(0));
 
         // 保存加工进度
         for (int i = 0; i < this.cookingProgress.length; i++) {
             output.putInt("CookingProgress_" + i, this.cookingProgress[i]);
             output.putInt("CookingTime_" + i, this.cookingTime[i]);
+
+            // 序列化营火中的物品
+            ContainerHelper.saveAllItems(output.child("Items"), list, true);
         }
     }
 
@@ -125,29 +126,9 @@ public class GreatCampfireBlockEntity extends BlockEntity {
             }
         }
 
-        System.out.println("[client Load]item of inventory0: " + this.inventory.getResource(0));
-
         for (int i = 0; i < this.cookingProgress.length; i++) {
             this.cookingProgress[i] = input.getIntOr("CookingProgress_" + i, 0);
             this.cookingTime[i] = input.getIntOr("CookingTime_" + i, 0);
         }
     }
-
-    @Override
-    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
-        var output = net.minecraft.world.level.storage.TagValueOutput
-                .createWithContext(net.minecraft.util.ProblemReporter.DISCARDING, registries);
-        this.saveAdditional(output);
-
-        net.minecraft.nbt.CompoundTag tag = output.buildResult();
-
-        return tag;
-    }
-
-    @Override
-    @Nullable
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
 }
