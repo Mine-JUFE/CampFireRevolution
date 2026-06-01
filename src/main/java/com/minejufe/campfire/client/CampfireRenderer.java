@@ -103,7 +103,7 @@ public class CampfireRenderer<T extends BlockEntity>
             poseStack.mulPose(Axis.YP.rotationDegrees(i * 45.0F));
             poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
             poseStack.translate(-0.3125F, -0.3125F, 0.0F);
-            poseStack.scale(0.375F, 0.375F, 0.375F);
+            poseStack.scale(0.37F, 0.37F, 0.37F);
 
             state.items[i].submit(poseStack, submitNodeCollector, state.packedLight, OverlayTexture.NO_OVERLAY, 0);
 

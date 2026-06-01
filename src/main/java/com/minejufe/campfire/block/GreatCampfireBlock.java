@@ -51,7 +51,7 @@ public class GreatCampfireBlock extends CampfireBlock {
             Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         if (pLevel.getBlockEntity(pPos) instanceof GreatCampfireBlockEntity blockEntity) {
 
-            if (!pState.getValue(LIT) || pStack.isEmpty()) {
+            if (pStack.isEmpty()) {
                 return InteractionResult.PASS;
             }
 

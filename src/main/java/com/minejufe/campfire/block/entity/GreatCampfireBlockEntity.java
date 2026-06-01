@@ -42,8 +42,6 @@ public class GreatCampfireBlockEntity extends SyncedBlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             GreatCampfireBlockEntity blockEntity) {
         // 如果营火没被点燃，则跳过
-        if (!state.getValue(CampfireBlock.LIT))
-            return;
 
         if (!(level instanceof ServerLevel serverLevel))
             return;
@@ -53,7 +51,7 @@ public class GreatCampfireBlockEntity extends SyncedBlockEntity {
         // 遍历每个栏位
         for (int i = 0; i < blockEntity.inventory.size(); i++) {
             ItemStack stack = blockEntity.inventory.getResource(i).toStack();
-            if (!stack.isEmpty()) {
+            if (!stack.isEmpty() && (state.getValue(CampfireBlock.LIT))) {
                 didCook = true;
                 blockEntity.cookingProgress[i]++;
 
