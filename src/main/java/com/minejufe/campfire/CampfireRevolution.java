@@ -5,6 +5,9 @@ import org.slf4j.Logger;
 import com.minejufe.campfire.block.GoodnessCampfireBlock;
 import com.minejufe.campfire.item.ModItems;
 import com.minejufe.campfire.item.ModCreativeTabs;
+import com.minejufe.campfire.block.ModBlockEntities;
+import com.minejufe.campfire.block.ModBlocks;
+import com.minejufe.campfire.client.ClientModEvents;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +23,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -44,15 +48,27 @@ public class CampfireRevolution {
     public static final DeferredItem<BlockItem> GOODNESS_CAMPFIRE_ITEM =
             ITEMS.registerSimpleBlockItem("goodness_campfire", GOODNESS_CAMPFIRE);
 
+    // The constructor for the mod class is the first code that is run when your mod
+    // is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and
+    // pass them in automatically.
+
     public CampfireRevolution(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::onBlockEntityTypeAddBlocks);
-
-        BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModEventBus.addListener(this::onBlockEntityTypeAddBlocks);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
-
+        // 挂载渲染注册事件
+        if (FMLEnvironment.getDist().isClient()) {
+            modEventBus.addListener(ClientModEvents::registerBER);
+        }
+        // Register ourselves for server and other game events we are interested in.
+        // Note that this is necessary if and only if we want *this* class
+        // (CampfireRevolution) to respond directly to events.
+        // Do not add this line if there are no @SubscribeEvent-annotated functions in
+        // this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

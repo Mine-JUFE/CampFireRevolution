@@ -1,12 +1,13 @@
 package com.minejufe.campfire.item;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredItem;
 import com.minejufe.campfire.CampfireRevolution;
 
 public class ModItems {
-
+    // 物品延迟注册器
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CampfireRevolution.MODID);
 
     // 营火核心 — 用于合成各种营火
@@ -14,5 +15,6 @@ public class ModItems {
             Item::new,
             properties -> properties.stacksTo(16));
 
-    // 注意：goodness_campfire 已经改为方块，在 CampfireRevolution.java 中作为 BlockItem 注册
+    public static final DeferredItem<BlockItem> BASIC_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem("great_campfire",
+            com.minejufe.campfire.block.ModBlocks.GREAT_CAMPFIRE);
 }
