@@ -9,6 +9,7 @@ import com.minejufe.campfire.block.ModBlockEntities;
 import com.minejufe.campfire.block.ModBlocks;
 import com.minejufe.campfire.client.ClientModEvents;
 import com.mojang.logging.LogUtils;
+import com.oracle.graal.compiler.enterprise.m;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -42,11 +43,11 @@ public class CampfireRevolution {
             .create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // 上帝的营火 — 方块（registerBlock 会注入 .setId() 再到 Properties）
-    public static final DeferredBlock<GoodnessCampfireBlock> GOODNESS_CAMPFIRE =
-            BLOCKS.registerBlock("goodness_campfire", GoodnessCampfireBlock::new);
+    public static final DeferredBlock<GoodnessCampfireBlock> GOODNESS_CAMPFIRE = BLOCKS
+            .registerBlock("goodness_campfire", GoodnessCampfireBlock::new);
     // 上帝的营火 — 方块物品
-    public static final DeferredItem<BlockItem> GOODNESS_CAMPFIRE_ITEM =
-            ITEMS.registerSimpleBlockItem("goodness_campfire", GOODNESS_CAMPFIRE);
+    public static final DeferredItem<BlockItem> GOODNESS_CAMPFIRE_ITEM = ITEMS
+            .registerSimpleBlockItem("goodness_campfire", GOODNESS_CAMPFIRE);
 
     // The constructor for the mod class is the first code that is run when your mod
     // is loaded.
@@ -58,7 +59,7 @@ public class CampfireRevolution {
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
-        ModEventBus.addListener(this::onBlockEntityTypeAddBlocks);
+        modEventBus.addListener(this::onBlockEntityTypeAddBlocks);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         // 挂载渲染注册事件
         if (FMLEnvironment.getDist().isClient()) {
