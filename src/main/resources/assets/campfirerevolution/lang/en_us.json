@@ -1,12 +1,15 @@
 {
-  "itemGroup.campfirerevolution": "CampfireRevolution",
-  "block.campfirerevolution.example_block": "Example Block",
-  "item.campfirerevolution.example_item": "Example Item",
-  "campfirerevolution.configuration.title": "Campfire:Revolution Configs",
-  "campfirerevolution.configuration.section.campfirerevolution.common.toml": "Campfire:Revolution Configs",
-  "campfirerevolution.configuration.section.campfirerevolution.common.toml.title": "Campfire:Revolution Configs",
-  "campfirerevolution.configuration.items": "Item List",
-  "campfirerevolution.configuration.logDirtBlock": "Log Dirt Block",
-  "campfirerevolution.configuration.magicNumberIntroduction": "Magic Number Text",
-  "campfirerevolution.configuration.magicNumber": "Magic Number"
+    "itemGroup.campfirerevolution": "CampfireRevolution",
+    "block.campfirerevolution.goodness_campfire": "God's Campfire",
+    "block.campfirerevolution.example_block": "Example Block",
+    "item.campfirerevolution.example_item": "Example Item",
+    "item.campfirerevolution.campfire_core": "Campfire Core",
+    "item.campfirerevolution.goodness_campfire": "God's Campfire",
+    "campfirerevolution.configuration.title": "Campfire:Revolution Configs",
+    "campfirerevolution.configuration.section.campfirerevolution.common.toml": "Campfire:Revolution Configs",
+    "campfirerevolution.configuration.section.campfirerevolution.common.toml.title": "Campfire:Revolution Configs",
+    "campfirerevolution.configuration.items": "Item List",
+    "campfirerevolution.configuration.logDirtBlock": "Log Dirt Block",
+    "campfirerevolution.configuration.magicNumberIntroduction": "Magic Number Text",
+    "campfirerevolution.configuration.magicNumber": "Magic Number"
 }

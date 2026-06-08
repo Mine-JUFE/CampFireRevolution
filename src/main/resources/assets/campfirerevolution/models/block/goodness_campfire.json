@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:block/campfire",
+    "textures": {
+        "fire": "campfirerevolution:block/goodness_fire",
+        "lit_log": "campfirerevolution:block/goodness_log"
+    }
+}

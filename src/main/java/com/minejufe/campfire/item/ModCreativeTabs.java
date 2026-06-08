@@ -17,6 +17,8 @@ public class ModCreativeTabs {
                     .title(Component.translatable("itemGroup.campfirerevolution"))
                     .icon(() -> ModItems.CAMPFIRE_CORE.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        // 从 ModItems 和 CampfireRevolution.ITEMS 收集所有物品
                         ModItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
+                        CampfireRevolution.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
                     }).build());
 }

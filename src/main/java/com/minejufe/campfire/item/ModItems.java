@@ -10,6 +10,7 @@ public class ModItems {
     // 物品延迟注册器
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CampfireRevolution.MODID);
 
+    // 营火核心 — 用于合成各种营火
     public static final DeferredItem<Item> CAMPFIRE_CORE = ITEMS.registerItem("campfire_core",
             Item::new,
             properties -> properties.stacksTo(16));
