@@ -40,13 +40,6 @@ public class CampfireRevolution {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister
             .create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // 上帝的营火 — 方块（registerBlock 会注入 .setId() 再到 Properties）
-    public static final DeferredBlock<GoodnessCampfireBlock> GOODNESS_CAMPFIRE = BLOCKS
-            .registerBlock("goodness_campfire", GoodnessCampfireBlock::new);
-    // 上帝的营火 — 方块物品
-    public static final DeferredItem<BlockItem> GOODNESS_CAMPFIRE_ITEM = ITEMS
-            .registerSimpleBlockItem("goodness_campfire", GOODNESS_CAMPFIRE);
-
     // The constructor for the mod class is the first code that is run when your mod
     // is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and
@@ -57,7 +50,6 @@ public class CampfireRevolution {
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
-        modEventBus.addListener(this::onBlockEntityTypeAddBlocks);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         // 挂载渲染注册事件
         if (FMLEnvironment.getDist().isClient()) {
@@ -71,14 +63,6 @@ public class CampfireRevolution {
         NeoForge.EVENT_BUS.register(this);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-    }
-
-    /**
-     * 将 GoodnessCampfireBlock 注册到原版 CAMPFIRE BlockEntityType，
-     * 使其能正常使用营火的烹饪逻辑。
-     */
-    private void onBlockEntityTypeAddBlocks(BlockEntityTypeAddBlocksEvent event) {
-        event.modify(BlockEntityType.CAMPFIRE, GOODNESS_CAMPFIRE.get());
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

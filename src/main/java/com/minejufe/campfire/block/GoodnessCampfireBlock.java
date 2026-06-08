@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
@@ -21,10 +22,13 @@ import net.neoforged.neoforge.common.ItemAbility;
 
 import org.jspecify.annotations.Nullable;
 
+import com.minejufe.campfire.block.entity.GreatCampfireBlockEntity;
+
 /**
  * 上帝的营火 — 永恒燃烧、满亮度、赋予神圣效果。
  * <p>
- * 请在注册时通过 {@code BLOCKS.registerBlock("goodness_campfire", GoodnessCampfireBlock::new)}
+ * 请在注册时通过
+ * {@code BLOCKS.registerBlock("goodness_campfire", GoodnessCampfireBlock::new)}
  * 方式注册，以保证 NeoForge 能正确注入方块 id 到 Properties。
  */
 public class GoodnessCampfireBlock extends CampfireBlock {
@@ -33,11 +37,16 @@ public class GoodnessCampfireBlock extends CampfireBlock {
     public GoodnessCampfireBlock(BlockBehaviour.Properties properties) {
         super(true, 2,
                 properties.mapColor(MapColor.GOLD)
-                        .strength(50.0F, 3600.0F)       // 基岩级抗性
+                        .strength(50.0F, 3600.0F) // 基岩级抗性
                         .sound(SoundType.NETHERITE_BLOCK) // 厚重的声音
-                        .lightLevel(state -> 15)          // 永远满亮度
+                        .lightLevel(state -> 15) // 永远满亮度
                         .noOcclusion()
                         .requiresCorrectToolForDrops());
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new GreatCampfireBlockEntity(pos, state);
     }
 
     // ====== 永不熄灭 ======
@@ -48,7 +57,8 @@ public class GoodnessCampfireBlock extends CampfireBlock {
     }
 
     @Override
-    public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+    public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility,
+            boolean simulate) {
         // 阻止铲子熄灭营火
         if (itemAbility == ItemAbilities.SHOVEL_DOUSE) {
             return null;
@@ -59,7 +69,8 @@ public class GoodnessCampfireBlock extends CampfireBlock {
     // ====== 神圣效果 ======
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+            InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (!level.isClientSide() && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 2, false, false, true));
             living.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 100, 1, false, false, true));

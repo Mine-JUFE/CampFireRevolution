@@ -9,18 +9,21 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModBlocks {
-    // 延迟注册器
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CampfireRevolution.MODID);
+        // 延迟注册器
+        public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CampfireRevolution.MODID);
 
-    // 注册方块
-    public static final DeferredBlock<GreatCampfireBlock> GREAT_CAMPFIRE = BLOCKS.<GreatCampfireBlock>registerBlock(
-            "great_campfire",
-            p -> new GreatCampfireBlock(true, 1, p),
-            () -> BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .strength(2.0f, 3.0f)
-                    .sound(SoundType.WOOD)
-                    .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
-                    .noOcclusion());
+        // 注册方块
+        public static final DeferredBlock<GreatCampfireBlock> GREAT_CAMPFIRE = BLOCKS.<GreatCampfireBlock>registerBlock(
+                        "great_campfire",
+                        p -> new GreatCampfireBlock(true, 1, p),
+                        () -> BlockBehaviour.Properties.of()
+                                        .mapColor(MapColor.WOOD)
+                                        .strength(2.0f, 3.0f)
+                                        .sound(SoundType.WOOD)
+                                        .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
+                                        .noOcclusion());
+
+        public static final DeferredBlock<GoodnessCampfireBlock> GOODNESS_CAMPFIRE = BLOCKS
+                        .<GoodnessCampfireBlock>registerBlock("goodness_campfire", GoodnessCampfireBlock::new);
 
 }

@@ -9,12 +9,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ModBlockEntities {
-    // 方块实体延迟注册器
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
-            .create(BuiltInRegistries.BLOCK_ENTITY_TYPE, CampfireRevolution.MODID);
+        // 方块实体延迟注册器
+        public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
+                        .create(BuiltInRegistries.BLOCK_ENTITY_TYPE, CampfireRevolution.MODID);
 
-    // 绑定方块到方块实体上
-    public static final Supplier<BlockEntityType<GreatCampfireBlockEntity>> GREAT_CAMPFIRE_BE = BLOCK_ENTITIES.register(
-            "great_campfire_be",
-            () -> new BlockEntityType<>(GreatCampfireBlockEntity::new, ModBlocks.GREAT_CAMPFIRE.get()));
+        // 绑定方块到方块实体上
+        public static final Supplier<BlockEntityType<GreatCampfireBlockEntity>> GREAT_CAMPFIRE_BE = BLOCK_ENTITIES
+                        .register(
+                                        "great_campfire_be",
+                                        () -> new BlockEntityType<>(GreatCampfireBlockEntity::new,
+                                                        ModBlocks.GREAT_CAMPFIRE.get(),
+                                                        ModBlocks.GOODNESS_CAMPFIRE.get()));
 }
