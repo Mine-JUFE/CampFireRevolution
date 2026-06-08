@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "IGI",
+        "GCG",
+        "IGI"
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:netherite_ingot"
+        },
+        "G": {
+            "item": "minecraft:glowstone"
+        },
+        "C": {
+            "item": "campfirerevolution:campfire_core"
+        }
+    },
+    "result": {
+        "id": "campfirerevolution:goodness_campfire",
+        "count": 1
+    }
+}
